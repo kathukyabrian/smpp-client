@@ -1,7 +1,0 @@
-{
-    "files.associations": {
-        "stdlib.h": "c",
-        "tcp.h": "c",
-        "types.h": "c"
-    }
-}

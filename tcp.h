@@ -2,7 +2,7 @@
 #define TCP_H
 
 // constants
-#define LIMIT 20
+// #define LIMIT 20
 
 // function definitions
 int connect();

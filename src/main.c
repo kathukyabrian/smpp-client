@@ -52,7 +52,7 @@ int main()
 
     char *service_type = "CMT";
     char *source_address = "TIARACONECT";
-    char *dest_address = "254723624727";
+    char *dest_address = "254757387285";
 
     // bind_req.system_id = malloc(strlen(system_id) + 1);
     strcpy(bind_req.system_id, system_id);

@@ -997,5 +997,161 @@ pdu body - sepecifically for bind_transmitter request
 - allows EMSE to receive a form of delivery ACK that indicates if the message has been successfully or unsuccessfully delivered to the destination MS within the SMPP response PDU
 - designed for applications that involve real-time messaging where an ESME requires a sync end-to-end delivery outcome without the need for long term MC storage
 
-## Message Delivery Options(4.3)
+## Message Delivery Options
+- provide means of delivering short messages from MC to an ESME - typically originate from an MS
 
+### deliver_sm
+- issued by the MC to send a message to an ESME
+- header
+    - command_id = 0x00000005;
+- service_type
+    - length: max of 6
+    - type: c-octet string
+    - description: indicates SMS application service associated with the message, set to NULL for default MC settings
+- source_addr_ton
+    - length: 1
+    - type: Integer
+    - description: type of number for source address
+- source_addr_npi
+    - length: 1
+    - type: Integer
+    - description: numbering plan indicator for source address
+- source_addr
+    - length: max of 21
+    - type: c-octet string
+    - description: address of SME which originated this message, if unknown set to NULL
+- dest_addr_ton
+    - length: 1
+    - type: Integer
+    - description: type of number of destination
+- dest_addr_npi
+    - length: 1
+    - type: Integer
+    - description: numbering plan indicator for destination address
+- destination_addr
+    - length: max of 21
+    - type: c-octet string
+    - description: destination address of this short message, for MTs this is the directory number of the recipient MS
+- esm_class
+    - length: 1
+    - type: Integer
+    - description: indicates message mode and message type
+- protocol_id
+    - length: 1
+    - type: Integer
+    - description: protocol identifier
+- priority_flag
+    - length: 1
+    - type: Integer
+    - description: designates priority level of the message
+- schedule_delivery_time
+    - length: 1 or 17
+    - type: c-octet string
+    - description: set to NULL for immediate message delivery
+- validity_period
+    - length: 1 or 17
+    - type: c-octet string
+    - description: set to NULL to request the MC default validity period. superseded by the qos_time_to_live TLV if specified
+- registered_delivery
+    - length: 1
+    - type: Integer
+    - description: indicator to signify if a MC DLR, manual ACK, delivery ACK or an intermediate notification is required
+- replace_if_present_flag
+    - length: 1
+    - type: Integer
+    - description: indicator if the submitted message should replace an existing message
+- data_coding
+    - length: 1
+    - type: Integer
+    - description: defines encoding scheme of the short message user data
+- sm_default_msg_id
+    - length: 1
+    - type: Integer
+    - description: indicates the short message to send from a list of pre-defined short messages stored on the MC, if not using a MC canned message set to NULL
+- sm_length
+    - length: 1
+    - type: Integer
+    - description: length in octets of the short_message user data
+- short_message
+    - length: 0-255
+    - type: octet-string
+    - description: up to 255 octets of short message user data. usually superceded by the message_payload TLV if specified
+- Message Submission TLVs
+    - length: var
+    - type: TLV
+
+### deliver_sm_resp
+- headers
+    - command_id = 0x80000005;
+- message_id
+    - length: max 65
+    - type: c-octet string
+    - description: unused and should be set to null
+- Message Delivery Response TLVs
+    - length: var
+    - type: TLV
+
+### data_sm
+- symetrically used for delivery as it is used to submit messages
+
+### Message Delivery Request TLVs
+|name|desc|
+|---|---|
+|callback_num|callback number associated with the short message|
+|callback_num_atag|associates a displayable alphanumeric tag with the callback number|
+|callback_num_pres_ind|defines the callback number presentation and screening|
+|dest_addr_np_country|E.164 info to the operator country code|
+|dest_addr_np_information|number portability info for the destination address|
+|dest_addr_np_resolution|number portability query indicator|
+|dest_addr_subunit|subcomponent in the destination service for which the user data is intended|
+|dest_network_id|identification of destination network|
+|dest_node_id|identification of destination node|
+|dest_subaddress|subaddress of the destination node|
+|dest_port|indicates application port number associated with the destination address of the message|
+|dpf_result|indicates whether the delivery pending flag was set|
+|its_reply_type|controls the MS user's reply method to an SMS delivery message received from the network|
+|its_session_info|session control info for interactive teleservice|
+|language_indicator|indicates the language of the alphanum text message|
+|message_payload|containes the extended short message user data - upto 64k octets can be transmitted|
+|message_state|should be present for MC dlrs and intermediate notifications|
+|network_error_code|may be present for dlrs and intermediate notifications|
+|payload_type|defines the type of payload|
+|privacy_indicator|indicates level of privacy associated with the message|
+|receipted_message_id|MC message id of message being receipted|
+|sar_msg_ref_num|ref number for particular concatenated short message|
+|sar_segment_seqnum|ref number for a particular short message fragment within the concatenated short message|
+|sar_total_segments|indicates the total number of short message segments within the concatenated short message|
+|source_addr_subunit|subcomponent of the destination service which created the user dat|
+|source_network_id|identification of source network|
+|source_node_id|identification of source node|
+|source_port|indicates app port number associated with the source address of the message. should be present for WAP applications|
+|source_subaddress|subaddress of message originator|
+|user_message_reference|ESME assigned message ref number|
+|user_response_code|user response code|
+|ussd_service_op|identifes the required USSD service type when interfacing to a USSD system|
+
+### Message Delivery Response TLVs
+|additional_status_info_text|ASCII text giving a description of the meaning of the response|
+|delivery_failure_reason|indicates reason for delivery failure|
+|network_error_code|error code specific to a wireless network|
+
+### Delivery Message Types
+- normal message
+- MC delivery receipt
+- intermediate notification
+- SME user/manual ACK
+- SME delivery ACK
+- conversation abort
+- MC-MC handover message
+
+#### MC Delivery Receipt
+
+#### Intermediate Notification
+
+#### SME Delivery ACK
+
+#### SME Manual/User ACK
+
+#### Conversation Abort
+
+## Message Broadcast Operations

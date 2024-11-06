@@ -1145,13 +1145,43 @@ pdu body - sepecifically for bind_transmitter request
 - MC-MC handover message
 
 #### MC Delivery Receipt
+- carries MC DLR
+- the MC on detecting the final state of a registered message, would normally generate a new receipt message addressed to the originator of the message
+- delivered through deliver_sm or data_sm operation
+- relevant fields
+    - source address(destination address of the original SM)
+        - ton
+        - npi
+        - addr
+    - destination address(source address of thne original SM)
+        - ton
+        - npi
+        - addr
+    - esm_class
+        - bit 2 set to 1 to indicate its a DLR
+    - message_state TLV
+    - network_error_code TLV
+    - receipted_message_id TLV
 
 #### Intermediate Notification
+- special form of message that the MC may send to an ESME for an MT message - provides an intermediate status of a message delivery attempt
+- typical uses are to report the outcome of delivery attempts made during the message's retry lifetime within the MC
+- relevant TLVs
+    - message_state TLV
+    - network_error_code TLV
+    - receipted_message_id TLV
 
 #### SME Delivery ACK
+- indication from the recipient SME that the user has read the short message
+- for an MS-based SME, an SME delivery ACK is sent when the MS user or MS application has read the message from the SMS storage unit
+- for a fixed SME the circumstances in which an SME delivery ACK may be sent are beyond the scope of this doc
 
 #### SME Manual/User ACK
+- application generated reply message sent in response to an application request message
 
 #### Conversation Abort
+- unique to interactive teleservice defined by Korean CDMA carriers
+- sent by a MS-based SME to indicate the unexpected termination of an interactive session
+- may be carried in a deliver_sm or data_sm PDU
 
 ## Message Broadcast Operations

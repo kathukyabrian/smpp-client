@@ -1185,3 +1185,237 @@ pdu body - sepecifically for bind_transmitter request
 - may be carried in a deliver_sm or data_sm PDU
 
 ## Message Broadcast Operations
+- provide cell broadcast services to ESMEs
+
+### broadcast_sm
+- issued by ESME to submit a message to the MC for broadcast to a specified geographical area or set of geographical areas
+
+- header
+    - command_id = 0x00000111;
+- service_type
+    - length: max of 6
+    - type: c-octet string
+    - description: indicates SMS application service associated with the message, set to NULL for default MC settings
+- source_addr_ton
+    - length: 1
+    - type: Integer
+    - description: type of number for source address
+- source_addr_npi
+    - length: 1
+    - type: Integer
+    - description: numbering plan indicator for source address
+- source_addr
+    - length: max of 21
+    - type: c-octet string
+    - description: address of SME which originated this message, if unknown set to NULL
+- message_id
+    - length: max of 65
+    - type: c-octet string
+    - description: used when replacing a message previously submitted or broadcast
+- priority_flag
+    - length: 1
+    - type: Integer
+    - description: designates priority level of the message
+- schedule_delivery_time
+    - length: 1 or 17
+    - type: c-octet string
+    - description: set to NULL for immediate message delivery
+- validity_period
+    - length: 1 or 17
+    - type: c-octet string
+    - description: set to NULL to request the MC default validity period. superseded by the qos_time_to_live TLV if specified
+- replace_if_present_flag
+    - length: 1
+    - type: Integer
+    - description: indicator if the submitted message should replace an existing message
+- data_coding
+    - length: 1
+    - type: Integer
+    - description: defines encoding scheme of the short message user data
+- sm_default_msg_id
+    - length: 1
+    - type: Integer
+    - description: indicates the short message to send from a list of pre-defined short messages stored on the MC, if not using a MC canned message set to NULL
+- broadcast_area_identifier
+    - length: var
+    - type: TLV
+    - description: identifies the target broadcast area for the requested message broadcast
+- broadcast_content_type
+    - length: var
+    - type: TLV
+    - description: specifies content type of message
+- broadcast_frequency_interval
+    - length: var
+    - type: TLV
+    - description: indicates frequency interval at which the broadcasts of a message should be reperted
+- broadcast request optional TLVs
+    - length: var
+    - type: TLV
+
+### broadcast_sm_resp
+- headers
+    - command_id = 0x80000111;
+- message_id
+    - length: max 65
+    - type: c-octet string
+    - description: unused and should be set to null
+- broadcast response optional TLVs
+    - length: var
+    - type: TLV
+
+
+### message replacement with broadcast_sm
+- broadcast_sm can be used to replace an existing message which has been previously submitted to MC
+- **setting the replace_if_present to 1** activates this mode
+- additionally, it is necessary to supply a value for the message_id param or provide the user_message_reference TLV
+
+## Ancilliary Submission Operations
+### cancel_sm
+- issued by ESME to cancel one or more previously submitted short messages that are pending delivery
+- command may specify a particular message to cancel or all messages matching a particular source, destination and service_type
+- if message_id is set to the ID of the previously submitted message then provided the source address supplied by the ESME matches that of the stored message, that message will be cancelled.
+- if message_id is NULL all outstanding undelivered messages with matching source and destination addresses and service_type if specified are cancelled.
+
+- header
+    - command_id = 0x00000008;
+- service_type
+    - length: max of 6
+    - type: c-octet string
+    - description: indicates SMS application service associated with the message, set to NULL for default MC settings
+- message_id
+    - length: max of 65
+    - type: c-octet string
+    - description: message ID of the message to be cancelled. set to NULL if cancelling a group of messages
+- source_addr_ton
+    - length: 1
+    - type: Integer
+    - description: used for verification
+- source_addr_npi
+    - length: 1
+    - type: Integer
+    - description: used for verification
+- source_addr
+    - length: max of 21
+    - type: c-octet string
+    - description: used for verification
+- dest_addr_ton
+    - length: 1
+    - type: Integer
+    - description: used for verification
+- dest_addr_npi
+    - length: 1
+    - type: Integer
+    - description: used for verification
+- destination_addr
+    - length: max of 21
+    - type: c-octet string
+    - description: used for verification
+
+### cancel_sm_resp
+- header
+    - command_id = 0x80000008;
+
+### query_sm
+- used to query status of previously submitted SM
+
+- header
+    - command_id = 0x00000003;
+- message_id
+    - length: max of 65
+    - type: c-octet string
+    - description: message ID of the message to be cancelled. set to NULL if cancelling a group of messages
+- source_addr_ton
+    - length: 1
+    - type: Integer
+    - description: used for verification
+- source_addr_npi
+    - length: 1
+    - type: Integer
+    - description: used for verification
+- source_addr
+    - length: max of 21
+    - type: c-octet string
+    - description: used for verification
+
+### cancel_sm_resp
+- header
+    - command_id = 0x80000003;
+- message_id
+    - length: max of 65
+    - type: c-octet string
+    - description: message ID of message being queried
+- final_date
+    - length: 1 or 17
+    - type: c-octet string
+    - description: date and time when the queried message reached a finall state. for messages that have not reached a final state yet, this field will contain a single NULL octet
+- message_state
+    - length: 1
+    - type: integer
+    - description: shows state of queried message
+- error_code
+    - length: 1
+    - type: integer
+    - description: holds a network error code defining the reason for failure of message delivery
+
+### replace_sm
+- replace a message that was submitted
+
+- header
+    - command_id = 0x00000007;
+- message_id
+    - length: max of 65
+    - type: c-octet string
+    - description: message ID of the message to be replaced. set to NULL if cancelling a group of messages
+- source_addr_ton
+    - length: 1
+    - type: Integer
+    - description: used for verification
+- source_addr_npi
+    - length: 1
+    - type: Integer
+    - description: used for verification
+- source_addr
+    - length: max of 21
+    - type: c-octet string
+    - description: used for verification
+- schedule_delivery_time
+    - length: 1 or 17
+    - type: c-octet string
+    - description: set to NULL for immediate message delivery
+- validity_period
+    - length: 1 or 17
+    - type: c-octet string
+    - description: new expiry time for the short message. set to NULL to preserver original value
+- registered_delivery
+    - length: 1
+    - type: Integer
+    - description: indicator to signify if a MC DLR, manual ACK, delivery ACK or an intermediate notification is required
+- sm_default_msg_id
+    - length: 1
+    - type: Integer
+    - description: indicates the short message to send from a list of pre-defined short messages stored on the MC, if not using a MC canned message set to NULL
+- sm_length
+    - length: 1
+    - type: Integer
+    - description: length in octets of the short_message user data
+- short_message
+    - length: 0-255
+    - type: octet-string
+    - description: up to 255 octets of short message user data. usually superceded by the message_payload TLV if specified
+- Message Replacement TLVs
+    - length: var
+    - type: TLV
+
+### replace_sm_resp
+- header
+    - command_id = 0x80000007;
+
+### message replacement TLVs
+|name|size|type|description|
+|---|---|---|---|
+|message_payload|var|TLV|containes the extended short message user data. up to 64 octets can be transmitted|
+
+## Ancilliary Broadcast Operations
+> ignore for now
+
+## PDU Field Definitions

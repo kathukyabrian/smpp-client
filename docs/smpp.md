@@ -1419,3 +1419,79 @@ pdu body - sepecifically for bind_transmitter request
 > ignore for now
 
 ## PDU Field Definitions
+### addr_ton, source_addr_ton, dest_addr_ton, esme_addr_ton
+|TON|Value|
+|---|---|
+|Unknown|00000000|
+|International|00000001|
+|National|00000010|
+|Network Specific|00000011|
+|Subscriber Number|00000100|
+|Alphanumeric|00000101|
+|Abbreviated|00000110|
+|Reserved||
+
+### addr_npi, source_addr_npi, dest_addr_npi, esme_addr_npi
+|TON|Value|
+|---|---|
+|Unknown|00000000|
+|ISDN(E113/E164)|00000001|
+|Data(X.121)|00000011|
+|Telex(F.69)|00000100|
+|Land Mobile(E.212)|00000110|
+|National|00001000|
+|Private|00001001|
+|ERMES|00001010|
+|Internet(IP)|00001110|
+|WAP Client Id|00010010|
+|Reserved||
+
+### address_range
+- used in bind_receiver and bind_transceiver command to specify a set of SME addresses serviced by the ESME client
+- a single SME address may also be specified in the address_range param
+- UNIX regex should be used to specify a range of addresses
+
+#### UNIX Regex
+
+- ^1234 - beginning with
+- 5678$ - ending with
+- ^1234567$ - absolute address
+- [13569]$ - ending with any of 1,3,5,6,9
+
+### command_id
+|command|value|
+|---|---|
+|bind_receiver|0x00000001|
+|bind_transmitter|0x00000002|
+|query_sm|0x00000003|
+|submit_sm|0x00000004|
+|deliver_sm|0x00000005|
+|unbind|0x00000006|
+|replace_sm|0x00000007|
+|cancel_sm|0x00000008|
+|bind_transceiver|0x00000009|
+|outbind|0x0000000B|
+|enquire_link|0x00000015|
+|submit_multi|0x00000021|
+|alert_notification|0x00000102|
+|data_sm|0x00000103|
+|broadcast_sm|0x00000111|
+|query_broadcast_sm|0x00000112|
+|cancel_broadcast_sm|0x00000113|
+|generic_nack|0x80000000|
+|bind_receiver_resp|0x80000001|
+|bind_transmitter_resp|0x80000002|
+|query_sm_resp|0x80000003|
+|submit_sm_resp|0x80000004|
+|deliver_sm_resp|0x80000005|
+|unbind_resp|0x80000006|
+|replace_sm_resp|0x80000007|
+|cancel_sm_resp|0x80000008|
+|bind_transceiver_resp|0x80000009|
+|enquire_link_resp|0x80000015|
+|submit_multi_resp|0x80000021|
+|data_sm_resp|0x80000103|
+|broadcast_sm_resp|0x80000111|
+|query_broadcast_sm_resp|0x80000112|
+|cancel_broadcast_sm_resp|0x80000113|
+|Reserved for MC Vendor|0x00010200 - 0x000102FF and 0x80010200 - 0x800102FF|
